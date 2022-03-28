@@ -4,7 +4,7 @@ const DECREASE = "DECREASE";
 export const increase = () => ({ type: INCREASE });
 export const decrease = () => ({ type: DECREASE });
 
-// thunk 함수
+// thunk 함수를 만들어주는 함수
 export const increaseAsync = (dispatch) => {
   setTimeout(() => {
     dispatch(increase());
