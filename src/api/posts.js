@@ -1,30 +1,11 @@
-const sleep = (n) => new Promise((resolve) => setTimeout(resolve, n));
-
-// {id, title, body}
-const posts = [
-  {
-    id: 1,
-    title: "Redux Basics",
-    body: "What is Redux Basics?",
-  },
-  {
-    id: 2,
-    title: "Redux Intermediate",
-    body: "What is Redux Intermediate?",
-  },
-  {
-    id: 3,
-    title: "Redux Advanced",
-    body: "What is Redux Advanced?",
-  },
-];
+import axios from "axios";
 
 export const getPosts = async () => {
-  await sleep(500);
-  return posts;
+  const response = await axios.get("http://localhost:4000/posts");
+  return response.data;
 };
 
 export const getPostById = async (id) => {
-  await sleep(500);
-  return posts.find((post) => post.id === id);
+  const response = await axios.get(`http://localhost:4000/posts/${id}`);
+  return response.data;
 };
