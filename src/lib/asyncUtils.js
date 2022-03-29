@@ -39,6 +39,7 @@ export const createPromiseThunkById = (
     dispatch({ type, meta: id });
     try {
       const payload = await promiseCreator(param); // posts, post
+
       dispatch({
         type: SUCCESS,
         payload,
@@ -93,7 +94,7 @@ export const handleAsyncActionsById = (type, key, keepData) => {
           [key]: {
             ...state[key],
             [id]: reducerUtils.loading(
-              keepData ? state[key][id].data && state[key][id].data : null
+              keepData ? state[key][id] && state[key][id].data : null
             ),
           },
         };
