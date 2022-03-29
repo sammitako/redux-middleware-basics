@@ -11,11 +11,12 @@ const PostListContainer = () => {
   // modules에서 API 호출
   useEffect(() => {
     // 데이터 리로딩되는 문제 해결
-    if (data) return;
+    // if (data) return; // deps -> [data]
     dispatch(getPosts());
-  }, [dispatch, data]);
+  }, [dispatch]);
 
-  if (loading) return <div>Loading...</div>;
+  // 기존의 데이터 유지 -> 데이터 존재하면 Loading... 숨김
+  if (loading && !data) return <div>Loading...</div>;
   if (error) return <div>ERROR !</div>;
   if (!data) return null;
 

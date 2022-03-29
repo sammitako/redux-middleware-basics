@@ -24,7 +24,7 @@ const initialState = {
   post: reducerUtils.initial(),
 };
 
-const getPostsReducer = handleAsyncActions(GET_POSTS, "posts");
+const getPostsReducer = handleAsyncActions(GET_POSTS, "posts", true);
 const getPostReducer = handleAsyncActions(GET_POST, "post");
 // 리듀서
 export default function posts(state = initialState, action) {
