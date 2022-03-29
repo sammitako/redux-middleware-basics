@@ -10,8 +10,10 @@ const PostListContainer = () => {
 
   // modules에서 API 호출
   useEffect(() => {
+    // 데이터 리로딩되는 문제 해결
+    if (data) return;
     dispatch(getPosts());
-  }, [dispatch]);
+  }, [dispatch, data]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>ERROR !</div>;
