@@ -22,6 +22,39 @@ export const createPromiseThunk = (type, promiseCreator) => {
   };
 };
 
+// 파라미터 자체가 ID (idSelector 생략시에 들어가는 값 용도)
+const defaultIdSelector = (param) => param;
+
+// idSelector: 나중에 여러 파라미터 중에서 id를 불러오는 함수
+export const createPromiseThunkById = (
+  type,
+  promiseCreator,
+  idSelector = defaultIdSelector
+) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+
+  // meta: id 넣어줌
+  return (param) => async (dispatch) => {
+    const id = idSelector(param);
+    dispatch({ type, meta: id });
+    try {
+      const payload = await promiseCreator(param); // posts, post
+      dispatch({
+        type: SUCCESS,
+        payload,
+        meta: id,
+      });
+    } catch (e) {
+      dispatch({
+        type: ERROR,
+        payload: e,
+        error: true,
+        meta: id,
+      });
+    }
+  };
+};
+
 // reducer refactoring
 // loading에 기존의 데이터를 넣어줌
 export const handleAsyncActions = (type, key, keepData) => {
@@ -42,6 +75,43 @@ export const handleAsyncActions = (type, key, keepData) => {
         return {
           ...state,
           [key]: reducerUtils.error(action.payload),
+        };
+      default:
+        return state;
+    }
+  };
+};
+
+export const handleAsyncActionsById = (type, key, keepData) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+  return (state, action) => {
+    const id = action.meta;
+    switch (action.type) {
+      case type:
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.loading(
+              keepData ? state[key][id].data && state[key][id].data : null
+            ),
+          },
+        };
+      case SUCCESS:
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.success(action.payload),
+          },
+        };
+      case ERROR:
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.error(action.payload),
+          },
         };
       default:
         return state;

@@ -19,7 +19,7 @@ const PostContainer = ({ postId }) => {
     // return () => {
     //   dispatch(clearPost());
     // };
-  }, [postId, dispatch]);
+  }, [postId, dispatch, data]);
 
   if (loading && !data) return <div>Loading...</div>;
   if (error) return <div>ERROR !</div>;
