@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Post from "../components/Post";
 import { reducerUtils } from "../lib/asyncUtils";
-import { clearPost, getPost } from "../modules/posts";
+import { clearPost, getPost, goToHome } from "../modules/posts";
 
 const PostContainer = ({ postId }) => {
   const { data, loading, error } = useSelector(
@@ -25,7 +25,12 @@ const PostContainer = ({ postId }) => {
   if (error) return <div>ERROR !</div>;
   if (!data) return null;
 
-  return <Post post={data} />;
+  return (
+    <>
+      <button onClick={() => dispatch(goToHome())}>HOME</button>
+      <Post post={data} />;
+    </>
+  );
 };
 
 export default PostContainer;
