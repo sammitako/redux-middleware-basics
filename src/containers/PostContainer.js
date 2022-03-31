@@ -28,7 +28,7 @@ const PostContainer = ({ postId }) => {
   return (
     <>
       <button onClick={() => dispatch(goToHome())}>HOME</button>
-      <Post post={data} />;
+      <Post post={data} />
     </>
   );
 };

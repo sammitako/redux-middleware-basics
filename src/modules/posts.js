@@ -6,6 +6,7 @@ import {
   handleAsyncActionsById,
   reducerUtils,
 } from "../lib/asyncUtils";
+import { call, put, takeEvery } from "redux-saga/effects";
 
 // API 요청 하나당 액션 3개씩
 const GET_POSTS = "GET_POSTS";
@@ -20,7 +21,7 @@ const CLEAR_POST = "CLEAR_POST";
 
 // thunk 함수 작성
 // (actionType, promiseCreator)
-export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts);
+// export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts);
 // export const getPost = createPromiseThunk(GET_POST, postsAPI.getPostById);
 // export const getPost = (id) => async (dispatch) => {
 //   dispatch({ type: GET_POST, meta: id });
@@ -37,7 +38,57 @@ export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts);
 //     });
 //   }
 // };
-export const getPost = createPromiseThunkById(GET_POST, postsAPI.getPostById);
+// export const getPost = createPromiseThunkById(GET_POST, postsAPI.getPostById);
+
+export const getPosts = () => ({ type: GET_POSTS });
+
+// payload: saga에서 API 호출할 때 파라미터로 사용
+// meta: reducer에서 처리할 때 사용
+export const getPost = (id) => ({ type: GET_POST, payload: id, meta: id });
+
+// saga 함수
+function* getPostsSaga() {
+  try {
+    const posts = yield call(postsAPI.getPosts);
+    yield put({
+      type: GET_POSTS_SUCCESS,
+      payload: posts,
+    });
+  } catch (e) {
+    yield put({
+      type: GET_POSTS_ERROR,
+      payload: e,
+      error: true,
+    });
+  }
+}
+
+// dispatch되는 action 확인
+function* getPostSaga(action) {
+  const id = action.payload;
+  try {
+    const post = yield call(postsAPI.getPostById, id);
+    yield put({
+      type: GET_POST_SUCCESS,
+      payload: post,
+      meta: id,
+    });
+  } catch (e) {
+    yield put({
+      type: GET_POST_ERROR,
+      payload: e,
+      error: true,
+      meta: id,
+    });
+  }
+}
+
+// redux 모듈을 위한 saga 액션들을 모니터링하는 함수 -> rootSaga에 포함
+export function* postsSaga() {
+  yield takeEvery(GET_POSTS, getPostsSaga);
+  yield takeEvery(GET_POST, getPostSaga);
+}
+
 export const goToHome =
   () =>
   (dispatch, getState, { history }) => {
