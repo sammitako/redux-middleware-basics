@@ -2,6 +2,8 @@ import * as postsAPI from "../api/posts";
 import {
   createPromiseThunk,
   createPromiseThunkById,
+  createPromiseSaga,
+  createPromiseSagaById,
   handleAsyncActions,
   handleAsyncActionsById,
   reducerUtils,
@@ -46,42 +48,45 @@ export const getPosts = () => ({ type: GET_POSTS });
 // meta: reducer에서 처리할 때 사용
 export const getPost = (id) => ({ type: GET_POST, payload: id, meta: id });
 
-// saga 함수
-function* getPostsSaga() {
-  try {
-    const posts = yield call(postsAPI.getPosts);
-    yield put({
-      type: GET_POSTS_SUCCESS,
-      payload: posts,
-    });
-  } catch (e) {
-    yield put({
-      type: GET_POSTS_ERROR,
-      payload: e,
-      error: true,
-    });
-  }
-}
+const getPostsSaga = createPromiseSaga(GET_POSTS, postsAPI.getPosts);
+const getPostSaga = createPromiseSagaById(GET_POST, postsAPI.getPostById);
 
-// dispatch되는 action 확인
-function* getPostSaga(action) {
-  const id = action.payload;
-  try {
-    const post = yield call(postsAPI.getPostById, id);
-    yield put({
-      type: GET_POST_SUCCESS,
-      payload: post,
-      meta: id,
-    });
-  } catch (e) {
-    yield put({
-      type: GET_POST_ERROR,
-      payload: e,
-      error: true,
-      meta: id,
-    });
-  }
-}
+// saga 함수
+// function* getPostsSaga() {
+//   try {
+//     const posts = yield call(postsAPI.getPosts);
+//     yield put({
+//       type: GET_POSTS_SUCCESS,
+//       payload: posts,
+//     });
+//   } catch (e) {
+//     yield put({
+//       type: GET_POSTS_ERROR,
+//       payload: e,
+//       error: true,
+//     });
+//   }
+// }
+
+// // dispatch되는 action 확인
+// function* getPostSaga(action) {
+//   const id = action.payload;
+//   try {
+//     const post = yield call(postsAPI.getPostById, id);
+//     yield put({
+//       type: GET_POST_SUCCESS,
+//       payload: post,
+//       meta: id,
+//     });
+//   } catch (e) {
+//     yield put({
+//       type: GET_POST_ERROR,
+//       payload: e,
+//       error: true,
+//       meta: id,
+//     });
+//   }
+// }
 
 // redux 모듈을 위한 saga 액션들을 모니터링하는 함수 -> rootSaga에 포함
 export function* postsSaga() {
